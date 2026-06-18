@@ -49,7 +49,16 @@ app.use("/api/pdf", pdfRouter);
 app.use("/api/credit", creditsRouter);
 app.use("/api/delete", deleteNote);
 
-app.listen(PORT, () => {
-  console.log(`server running on ${PORT}`);
-  connectDb();
-});
+const startServer = async () => {
+  try {
+    await connectDb();
+    app.listen(PORT, () => {
+      console.log(`server running on ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Server startup failed. Exiting.", error);
+    process.exit(1);
+  }
+};
+
+startServer();
