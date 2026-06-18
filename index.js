@@ -23,7 +23,7 @@ app.post(
 
 
 app.use(cors(
-   {origin:"http://localhost:5173",
+   {origin:"https://examnotesai-frontend-hx3o.onrender.com",
     credentials:true,
     method: ["GET", "POST" , "PUT" , "DELETE" , "OPTIONS"]
   }
