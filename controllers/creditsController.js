@@ -25,11 +25,13 @@ export const createCreditOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid credit plan" });
     }
 
+    const clientUrl = (process.env.CLIENT_URL || "").replace(/\/+$/, "");
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      success_url: `${process.env.CLIENT_URL}/payment-success`,
-      cancel_url: `${process.env.CLIENT_URL}/pricing`,
+      success_url: `${clientUrl}/payment-success`,
+      cancel_url: `${clientUrl}/pricing`,
       line_items: [
         {
           price_data: {
@@ -57,7 +59,7 @@ export const createCreditOrder = async (req, res) => {
 
 export const stripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
-  let events;
+  let event;
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
@@ -79,7 +81,7 @@ export const stripeWebhook = async (req, res) => {
       return res.status(400).json({ message: "Invalid metadata" });
     }
 
-    const user = await UserModel.findById(
+    const user = await UserModel.findByIdAndUpdate(
       userId,
       {
         $inc: { credits: creditsToAdd },
